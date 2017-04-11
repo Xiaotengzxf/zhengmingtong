@@ -1,0 +1,33 @@
+
+	enum MessageType{
+		LOGIN=1;//登录
+		SEND=2;//推送消息
+		REPLY=3;//回复
+		PING=4;//心跳
+		EXIT=5;//退出
+		REPLY_Login=6;//登录相应 暂时未用到
+		REPLY_EXIT=7;//退出相应信息 暂时未用到
+		SQUEEZE=8;//单点登录
+	
+	}
+	
+	enum MessageState{
+		WAITSEND=1;//等待发送
+		SENDING=2; //发送中
+		SUCCESS=3; //发送成功
+		FAILURE=4; //发送失败
+	}
+   
+	//登录消息
+	message IMMessage{
+		optional string senderId = 1;  //发送人Id
+		optional MessageType messageType=2;//消息类型
+		optional MessageState messageState=3;//消息状态
+		optional string receiveId=4;//接收人ID
+		optional string content=5;//消息内容
+		optional fixed64 sendTime=6;//发送时间
+		optional fixed64 msgId=7;//消息ID
+		optional int32 sendCount=8;//发送次数
+	}
+	
+	

@@ -1,0 +1,7 @@
+version: "Apple Swift version 3.0.1 (swiftlang-800.0.58.6 clang-800.0.42.1)"
+options: "b8d867478b04464f1c688e43f13b37aa"
+build_time: [534348385, 789975000]
+inputs:
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/zhenyuntong/ViewController.swift": [534049784, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/zhenyuntong/Controller/MineTableViewController.swift": [534265282, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/zhenyuntong/AppDelegate.swift": [534049784, 0]

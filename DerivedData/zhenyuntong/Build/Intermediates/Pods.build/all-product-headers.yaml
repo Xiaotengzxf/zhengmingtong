@@ -1,0 +1,87 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [
+    {
+      'type': 'directory',
+      'name': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/Alamofire/Alamofire.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "Alamofire-Swift.h",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/Alamofire/Alamofire.framework/Headers/Alamofire-Swift.h"
+        },
+        {
+          'type': 'file',
+          'name': "Alamofire-umbrella.h",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Target Support Files/Alamofire/Alamofire-umbrella.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/Alamofire/Alamofire.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Intermediates/Pods.build/Debug-iphoneos/Alamofire.build/module.modulemap"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/Pods_zhenyuntong.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "Pods-zhenyuntong-umbrella.h",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Target Support Files/Pods-zhenyuntong/Pods-zhenyuntong-umbrella.h"
+        },
+        {
+          'type': 'file',
+          'name': "Pods_zhenyuntong-Swift.h",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/Pods_zhenyuntong.framework/Headers/Pods_zhenyuntong-Swift.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/Pods_zhenyuntong.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Intermediates/Pods.build/Debug-iphoneos/Pods-zhenyuntong.build/module.modulemap"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/SwiftyJSON/SwiftyJSON.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "SwiftyJSON-Swift.h",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/SwiftyJSON/SwiftyJSON.framework/Headers/SwiftyJSON-Swift.h"
+        },
+        {
+          'type': 'file',
+          'name': "SwiftyJSON-umbrella.h",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Target Support Files/SwiftyJSON/SwiftyJSON-umbrella.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Products/Debug-iphoneos/SwiftyJSON/SwiftyJSON.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/zhangxiaofei/Downloads/zhengmingtong/DerivedData/zhenyuntong/Build/Intermediates/Pods.build/Debug-iphoneos/SwiftyJSON.build/module.modulemap"
+        }
+      ]
+    }
+  ]
+}

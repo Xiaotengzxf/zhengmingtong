@@ -1,0 +1,21 @@
+version: "Apple Swift version 2.3 (swiftlang-800.10.13 clang-800.0.42.1)"
+options: "e2bc955bbb86fbb135fe53cc00763d33"
+build_time: [534348310, 357805000]
+inputs:
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Alamofire.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Download.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Error.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Manager.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/MultipartFormData.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/NetworkReachabilityManager.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Notifications.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/ParameterEncoding.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Request.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Response.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/ResponseSerialization.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Result.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/ServerTrustPolicy.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Stream.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Timeline.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Upload.swift": [534050903, 0]
+  "/Users/zhangxiaofei/Downloads/zhengmingtong/Pods/Alamofire/Source/Validation.swift": [534050903, 0]
