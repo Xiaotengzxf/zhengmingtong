@@ -65,7 +65,7 @@ class InfoLookTableViewCell: UITableViewCell , UICollectionViewDataSource , UICo
         if let imageView = cell.viewWithTag(2) as? UIImageView {
             if let count = items?.count {
                 if indexPath.row < count {
-                    imageView.sd_setImage(with: URL(string: NetworkManager.installshared.macAddress() + items![indexPath.row]["newsItemIcon"].stringValue), placeholderImage: UIImage(named : "img_default_small"))
+                    imageView.sd_setImage(with: URL(string:items![indexPath.row]["newsItemIcon"].stringValue.hasPrefix("http") ? items![indexPath.row]["newsItemIcon"].stringValue : "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=\(items![indexPath.row]["newsItemIcon"].stringValue)"), placeholderImage: UIImage(named : "img_default_small"))
                 }else if indexPath.row == count {
                     imageView.image = UIImage(named: "ic_add")
                 }else{

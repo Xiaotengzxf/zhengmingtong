@@ -16,6 +16,7 @@ import Toaster
 class MyInfoTableViewController: UITableViewController {
     
     var image : UIImage?
+    var delegate : MyInfoTableViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,7 +101,7 @@ class MyInfoTableViewController: UITableViewController {
         let hud = showHUD(text: "加载中...")
         let userId = UserDefaults.standard.integer(forKey: "userId")
         Alamofire.upload(multipartFormData: {[weak self] (data) in
-            data.append(UIImagePNGRepresentation(self!.image!)!, withName: "File", fileName: "\(Date().timeIntervalSince1970)crop.png", mimeType: "image/png")
+            data.append(UIImageJPEGRepresentation(self!.image!, 0.1)!, withName: "File", fileName: "\(Date().timeIntervalSince1970)crop.png", mimeType: "image/png")
             data.append("\(userId)".data(using: .utf8)!, withName: "userId")
         }, to: NetworkManager.installshared.macAddress() + "/bbServer/" + NetworkManager.installshared.modifyHeader) {[weak self] (result) in
             hud.hide(animated: true)
@@ -111,13 +112,13 @@ class MyInfoTableViewController: UITableViewController {
                         let json = JSON(value)
                         if let result = json["result"].int , result == 1000 {
                             self?.tableView.reloadData()
-                            NotificationCenter.default.post(name: Notification.Name(NotificationName.Mine.rawValue), object: self!.image!)
+                            self?.delegate?.modifyHeader(data: UIImageJPEGRepresentation(self!.image!, 0.1))
                             if var mine = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
                                 mine["HEADER"] = json["data" , "header"].stringValue
                                 UserDefaults.standard.set(mine, forKey: "mine")
                                 UserDefaults.standard.synchronize()
                             }
-                            
+                            Toast(text: "头像修改成功").show()
                             
                         }else{
                             if let msg = json["msg"].string , msg.characters.count > 0 {
@@ -132,4 +133,8 @@ class MyInfoTableViewController: UITableViewController {
         }
     }
 
+}
+
+protocol MyInfoTableViewControllerDelegate {
+    func modifyHeader(data : Data?)
 }

@@ -18,7 +18,7 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
     var chatJson : [JSON] = []
     var selectedRow = 0
     var page = 0
-    var nShowEmpty = 2 // 1 无网络 2 加载中 3  无数据
+    var nShowEmpty = 2 // 1 无网络 2 加载中 3  无数据  4 未登录 5 未选择小区
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,10 +35,27 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
             self?.loadData()
         })
         tableView.mj_footer.isHidden = true
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let userId = UserDefaults.standard.integer(forKey: "userId")
+        if  userId > 0 {
+            let areaId = UserDefaults.standard.integer(forKey: "areaId")
+            if areaId > 0 {
+                nShowEmpty = 2
+            }else{
+                nShowEmpty = 5
+                tableView.reloadData()
+                return
+            }
+        }else{
+            nShowEmpty = 4
+            tableView.reloadData()
+            return
+        }
         if nShowEmpty == 2 {
             loadData()
         }else{
@@ -145,6 +162,26 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
             controller.data = item
         }
     }
+    @IBAction func createChat(_ sender: Any) {
+        let userId = UserDefaults.standard.integer(forKey: "userId")
+        if  userId > 0 {
+            let areaId = UserDefaults.standard.integer(forKey: "areaId")
+            if areaId > 0 {
+                self.performSegue(withIdentifier: "chatnew", sender: self)
+            }else{
+                if let controller = storyboard?.instantiateViewController(withIdentifier: "attention") as? AttentionTableViewController {
+                    controller.bChooseArea = true
+                    controller.title = "选择社区"
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            }
+            
+        }else{
+            if let controller = storyboard?.instantiateViewController(withIdentifier: "login") {
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        }
+    }
     
     // MARK: - 空数据
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView!) -> UIColor! {
@@ -157,7 +194,7 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
             name = "load_fail"
         }else if nShowEmpty == 2 {
             name = "jiazaizhong"
-        }else if nShowEmpty == 3 {
+        }else {
             name = "empty"
         }
         return UIImage(named: name)
@@ -171,6 +208,10 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
             message = "加载是件正经事儿，走心加载中..."
         }else if nShowEmpty == 3 {
             message = "空空如也，啥子都没有噢！"
+        }else if nShowEmpty == 4 {
+            message = "请先登录"
+        }else if nShowEmpty == 5 {
+            message = "请先选择社区"
         }
         let att = NSMutableAttributedString(string: message)
         att.addAttributes([NSFontAttributeName : UIFont.systemFont(ofSize: 13)], range: NSMakeRange(0, att.length))
@@ -183,9 +224,21 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
     
     func emptyDataSet(_ scrollView: UIScrollView!, didTap view: UIView!) {
         if nShowEmpty > 0 && nShowEmpty != 2 {
-            nShowEmpty = 2
-            tableView.reloadData()
-            loadData()
+            if nShowEmpty == 4 {
+                if let controller = storyboard?.instantiateViewController(withIdentifier: "login") {
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            }else if nShowEmpty == 5 {
+                if let controller = storyboard?.instantiateViewController(withIdentifier: "attention") as? AttentionTableViewController {
+                    controller.bChooseArea = true
+                    controller.title = "选择社区"
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            }else{
+                nShowEmpty = 2
+                tableView.reloadData()
+                loadData()
+            }
         }
     }
     
@@ -196,7 +249,7 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
     func imageAnimation(forEmptyDataSet scrollView: UIScrollView!) -> CAAnimation! {
         let animation = CABasicAnimation(keyPath: "transform")
         animation.fromValue = NSValue(caTransform3D: CATransform3DMakeRotation(0.0, 0.0, 0.0, 1.0))
-        animation.toValue = NSValue(caTransform3D: CATransform3DMakeRotation(CGFloat(M_PI_2), 0.0, 0.0, 1.0))
+        animation.toValue = NSValue(caTransform3D: CATransform3DMakeRotation(CGFloat(Double.pi / 2), 0.0, 0.0, 1.0))
         animation.duration = 0.5
         animation.isCumulative = true
         animation.repeatCount = MAXFLOAT

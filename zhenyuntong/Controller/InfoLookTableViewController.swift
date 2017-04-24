@@ -23,7 +23,7 @@ class InfoLookTableViewController: UITableViewController , SDCycleScrollViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let rect = CGRect(x: 0, y: 0, width: SCREENWIDTH, height: SCREENWIDTH * 504 / 900)
+        let rect = CGRect(x: 0, y: 0, width: SCREENWIDTH, height: SCREENWIDTH * 265 / 400)
         tableView.tableHeaderView?.frame = rect
         cycleScrollView = SDCycleScrollView(frame: rect, delegate: self, placeholderImage: nil)
         cycleScrollView?.pageControlAliment = SDCycleScrollViewPageContolAlimentRight
@@ -108,7 +108,7 @@ class InfoLookTableViewController: UITableViewController , SDCycleScrollViewDele
     }
     
     func refreshData() {
-        cycleScrollView?.imageURLStringsGroup = infoLookJson?["data" , "ads"].arrayValue.map({$0["adImgUrl"].stringValue})
+        cycleScrollView?.imageURLStringsGroup = infoLookJson?["data" , "ads"].arrayValue.map({$0["adImgUrl"].stringValue.hasPrefix("http") ? $0["adImgUrl"].stringValue : "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=\($0["adImgUrl"].stringValue)"})
         cycleScrollView?.titlesGroup = infoLookJson?["data" , "ads"].arrayValue.map({$0["remark"].stringValue})
         cycleScrollView?.placeholderImage = UIImage(named: "img_default")
         tableView.reloadData()
@@ -134,11 +134,19 @@ class InfoLookTableViewController: UITableViewController , SDCycleScrollViewDele
     }
     
     func changeArea() {
-        if let controller = storyboard?.instantiateViewController(withIdentifier: "attention") as? AttentionTableViewController {
-            controller.bChooseArea = true
-            controller.title = "选择社区"
-            self.navigationController?.pushViewController(controller, animated: true)
+        let userId = UserDefaults.standard.integer(forKey: "userId")
+        if  userId > 0 {
+            if let controller = storyboard?.instantiateViewController(withIdentifier: "attention") as? AttentionTableViewController {
+                controller.bChooseArea = true
+                controller.title = "选择社区"
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        }else{
+            if let controller = storyboard?.instantiateViewController(withIdentifier: "login") {
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         }
+        
     }
     
     func handleNotification(sender : Notification) {
@@ -296,7 +304,7 @@ class InfoLookTableViewController: UITableViewController , SDCycleScrollViewDele
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let controller = segue.destination as? CommentTableViewController {
             controller.linkUrl = self.infoLookJson?["data" , "ads" , adsIndex , "linkUrl"].string
-            controller.adId = self.infoLookJson!["data" , "ads" , adsIndex , "adId"].intValue
+            controller.adId = self.infoLookJson!["data" , "ads" , adsIndex , "objId"].intValue
             controller.imageUrl = self.infoLookJson?["data" , "ads" , adsIndex , "adImgUrl"].string
         }
     }

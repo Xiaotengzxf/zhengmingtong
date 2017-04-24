@@ -150,7 +150,15 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
                     cell.timeLabel.text = "完成时间：\(submitTime)"
                 }
                 
-            }else {
+            }else if state == 1 {
+                cell.stateLabel.text = "待处理"
+                if var submitTime = json["completeTime"].string {
+                    if submitTime.characters.count > 10 {
+                        submitTime = submitTime.substring(to: submitTime.index(submitTime.startIndex, offsetBy: 10))
+                    }
+                    cell.timeLabel.text = "反馈时间：\(submitTime)"
+                }
+            }else{
                 cell.stateLabel.text = "已终止"
                 if var submitTime = json["completeTime"].string {
                     if submitTime.characters.count > 10 {

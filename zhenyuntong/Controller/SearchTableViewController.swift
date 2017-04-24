@@ -9,21 +9,27 @@
 import UIKit
 import Toaster
 import SwiftyJSON
+import DZNEmptyDataSet
 
-class SearchTableViewController: UITableViewController , IQDropDownTextFieldDelegate {
+class SearchTableViewController: UITableViewController , IQDropDownTextFieldDelegate , DZNEmptyDataSetSource , DZNEmptyDataSetDelegate {
 
     @IBOutlet weak var dateTextField: IQDropDownTextField! // 办理时间
     @IBOutlet weak var reasonTextField: UITextField! // 事项名称
     @IBOutlet weak var searchButton: UIButton! // 搜索按钮
     var tableData : [JSON] = []
     var dateString : String?
+    var nShowEmpty = 0 // 1 无网络 2 加载中 3  无数据  4 未登录 5 未选择小区
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        let format = DateFormatter()
+        format.dateFormat = "yyyy-MM-dd"
+        dateString = format.string(from: Date())
         dateTextField.dropDownMode = .datePicker
+        dateTextField.date = Date()
         tableView.register(UINib(nibName: "EventTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
         tableView.tableFooterView = UIView()
+        tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: SCREENWIDTH, height: 164)
     }
 
     override func didReceiveMemoryWarning() {
@@ -122,29 +128,33 @@ class SearchTableViewController: UITableViewController , IQDropDownTextFieldDele
         dateTextField.resignFirstResponder()
         reasonTextField.resignFirstResponder()
         let reason = reasonTextField.text
-        if reason == nil || reason!.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {
-            Toast(text: "请输入事项名称").show()
-            return
-        }else if dateString == nil {
-            Toast(text: "请选择办理时间").show()
+        if (reason == nil || reason!.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0) && (dateString == nil) {
+            Toast(text: "请输入事项名称或办理时间").show()
             return
         }
         let userId = UserDefaults.standard.integer(forKey: "userId")
         let areaId = UserDefaults.standard.integer(forKey: "areaId")
         let hud = showHUD(text: "搜索中...")
-        NetworkManager.installshared.request(type: .post, url: NetworkManager.installshared.searchWorkList, params: ["userId" : userId , "areaId" : areaId , "workName" : reason! , "submitTime" : dateString!]){
+        NetworkManager.installshared.request(type: .post, url: NetworkManager.installshared.searchWorkList, params: ["userId" : userId , "areaId" : areaId , "workName" : reason ?? "" , "submitTime" : dateString ?? ""]){
             [weak self] (json , error) in
             hud.hide(animated: true)
             if let object = json {
-                if let result = object["result"].int , result == 1000 {
+                if let result = object["result"].int {
                     self?.tableData.removeAll()
-                    let data = object["data"].arrayValue
-                    self?.tableData += data
-                    self?.tableView.reloadData()
-                }else{
-                    if let message = object["msg"].string , message.characters.count > 0 {
-                        Toast(text: message).show()
+                    if result == 1000 {
+                        self?.nShowEmpty = 0
+                        
+                        let data = object["data"].arrayValue
+                        self?.tableData += data
+                        
+                    }else if result == 1004 {
+                        self?.nShowEmpty = 3
+                    }else{
+                        if let message = object["msg"].string , message.characters.count > 0 {
+                            Toast(text: message).show()
+                        }
                     }
+                    self?.tableView.reloadData()
                 }
             }else{
                 Toast(text: "网络出错，请检查网络").show()
@@ -168,5 +178,80 @@ class SearchTableViewController: UITableViewController , IQDropDownTextFieldDele
         // Pass the selected object to the new view controller.
     }
     */
+    
+    // MARK: - 空数据
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView!) -> UIColor! {
+        return UIColor.white
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        var name = ""
+        if nShowEmpty == 1 {
+            name = "load_fail"
+        }else if nShowEmpty == 2 {
+            name = "jiazaizhong"
+        }else {
+            name = "empty"
+        }
+        return UIImage(named: name)
+    }
+    
+    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        var message = ""
+        if nShowEmpty == 1 {
+            message = "世界上最遥远的距离就是没有WIFI...\n请点击屏幕重新加载！"
+        }else if nShowEmpty == 2 {
+            message = "加载是件正经事儿，走心加载中..."
+        }else if nShowEmpty == 3 {
+            message = "根据当前条件未查询到数据"
+        }else if nShowEmpty == 4 {
+            message = "请先登录"
+        }else if nShowEmpty == 5 {
+            message = "请先选择社区"
+        }
+        let att = NSMutableAttributedString(string: message)
+        att.addAttributes([NSFontAttributeName : UIFont.systemFont(ofSize: 13)], range: NSMakeRange(0, att.length))
+        return att
+    }
+    
+    func emptyDataSetShouldAnimateImageView(_ scrollView: UIScrollView!) -> Bool {
+        return nShowEmpty == 2
+    }
+    
+    func emptyDataSet(_ scrollView: UIScrollView!, didTap view: UIView!) {
+        if nShowEmpty > 0 && nShowEmpty != 2 {
+            if nShowEmpty == 4 {
+                if let controller = storyboard?.instantiateViewController(withIdentifier: "login") {
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            }else if nShowEmpty == 5 {
+                if let controller = storyboard?.instantiateViewController(withIdentifier: "attention") as? AttentionTableViewController {
+                    controller.bChooseArea = true
+                    controller.title = "选择社区"
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            }else{
+                nShowEmpty = 2
+                tableView.reloadData()
+               
+            }
+        }
+    }
+    
+    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView!) -> Bool {
+        return nShowEmpty > 0
+    }
+    
+    func imageAnimation(forEmptyDataSet scrollView: UIScrollView!) -> CAAnimation! {
+        let animation = CABasicAnimation(keyPath: "transform")
+        animation.fromValue = NSValue(caTransform3D: CATransform3DMakeRotation(0.0, 0.0, 0.0, 1.0))
+        animation.toValue = NSValue(caTransform3D: CATransform3DMakeRotation(CGFloat(Double.pi / 2), 0.0, 0.0, 1.0))
+        animation.duration = 0.5
+        animation.isCumulative = true
+        animation.repeatCount = MAXFLOAT
+        animation.autoreverses = false
+        animation.fillMode = kCAFillModeForwards
+        return animation
+    }
 
 }

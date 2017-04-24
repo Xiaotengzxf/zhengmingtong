@@ -45,7 +45,7 @@ class AreaListTableViewController: UITableViewController {
                         str = str.replacingOccurrences(of: "\\\"", with: "\"")
                         let arr = JSON(data: str.data(using: .utf8)!)
                         self?.areas += arr.arrayValue
-                        let keys = arr.arrayValue.map{$0["areaName"].stringValue}
+                        let keys = arr.arrayValue.map{$0["AREANAME".uppercased()].stringValue}
                         var k : Set<String> = []
                         var ks : [String : [String]] = [:]
                         for key in keys {
@@ -77,7 +77,7 @@ class AreaListTableViewController: UITableViewController {
                         }
                         
                         for json in arr.arrayValue {
-                            self?.data[json["areaName"].stringValue] = json
+                            self?.data[json["AREANAME".uppercased()].stringValue] = json
                         }
                     }
                     self?.tableView.reloadData()
@@ -98,9 +98,9 @@ class AreaListTableViewController: UITableViewController {
         if let tag = sender.object as? Int {
             if let item = sender.userInfo?["item"] as? JSON {
                 if tag == 1 {
-                    other.append(item["areaId"].int ?? 0)
+                    other.append(item["AREAID".uppercased()].int ?? 0)
                 }else if tag == 2 {
-                    let areaId = item["areaId"].int ?? 0
+                    let areaId = item["AREAID".uppercased()].int ?? 0
                     var tem = 0
                     for(index , aId) in other.enumerated() {
                         if areaId == aId {
@@ -131,23 +131,23 @@ class AreaListTableViewController: UITableViewController {
         if let array = capital[indexes[indexPath.section]] {
             let json = data[array[indexPath.row]]
             if let imageView = cell.contentView.viewWithTag(4) as? UIImageView {
-                if let icon = json?["areaIcon"].string {
+                if let icon = json?["AREAICON".uppercased()].string {
                     imageView.sd_setImage(with: URL(string: icon), placeholderImage: UIImage(named: "img_default_big"))
                 }else{
                     imageView.image = UIImage(named: "img_default_big")
                 }
             }
             if let label = cell.contentView.viewWithTag(2) as? UILabel {
-                label.text = json?["areaName"].string
+                label.text = json?["AREANAME".uppercased()].string
             }
             if let label = cell.contentView.viewWithTag(3) as? UILabel {
-                label.text = json?["areaAddress"].string
+                label.text = json?["areaAddress".uppercased()].string
             }
             if let imageView = cell.contentView.viewWithTag(5) as? UIImageView {
-                imageView.isHidden = !other.contains(json?["areaId"].int ?? 0)
+                imageView.isHidden = !other.contains(json?["areaId".uppercased()].int ?? 0)
             }
             if let label = cell.contentView.viewWithTag(6) as? UILabel {
-                label.isHidden = !other.contains(json?["areaId"].int ?? 0)
+                label.isHidden = !other.contains(json?["areaId".uppercased()].int ?? 0)
             }
         }
         
@@ -172,7 +172,7 @@ class AreaListTableViewController: UITableViewController {
             if let array = capital[indexes[indexPath.section]] {
                 let json = data[array[indexPath.row]]
                 controller.item = json
-                controller.bAttension = other.contains(json?["areaId"].int ?? 0)
+                controller.bAttension = other.contains(json?["areaId".uppercased()].int ?? 0)
                 NotificationCenter.default.post(name: Notification.Name(NotificationName.InfoLook.rawValue), object: 1)
                 self.navigationController?.pushViewController(controller, animated: true)
             }

@@ -114,7 +114,7 @@ class VerticalViewController: UIViewController, RAReorderableLayoutDelegate, RAR
                 title = filterItems[indexPath.row]["newsItemName"].stringValue
                 
             }
-            iconImageView.sd_setImage(with: URL(string: NetworkManager.installshared.macAddress() + name), placeholderImage: UIImage(named : "img_default_small"))
+            iconImageView.sd_setImage(with: URL(string: name.hasPrefix("http") ? name : "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=\(name)"), placeholderImage: UIImage(named : "img_default_small"))
         }
         if let deleteImageView = cell.viewWithTag(2) as? UIImageView {
             if indexPath.section == 0 {

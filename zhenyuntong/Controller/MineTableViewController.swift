@@ -10,7 +10,7 @@ import UIKit
 import SwiftyJSON
 import SDWebImage
 
-class MineTableViewController: UITableViewController {
+class MineTableViewController: UITableViewController , MyInfoTableViewControllerDelegate {
     
     private var titles : [[String]] = []
     var image : UIImage?
@@ -18,8 +18,7 @@ class MineTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        titles = [["请点击登录" , "服务器设置" ,"版本检测", "关于我们" , "意见反馈" , "清除缓存"] , ["是否接收通知" , "实名认证" , "我的关注" , "我的收藏"]]
-        NotificationCenter.default.addObserver(self, selector: #selector(MineTableViewController.handleNotification(sender:)), name: Notification.Name(NotificationName.Mine.rawValue), object: nil)
+        titles = [["请点击登录" , "服务器设置" , "关于我们" , "意见反馈" , "清除缓存"] , ["是否接收通知" , "实名认证" , "我的关注" , "我的收藏"]]
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -38,17 +37,7 @@ class MineTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(NotificationName.Mine.rawValue), object: nil)
-    }
-    
-    func handleNotification(sender : Notification) {
-        if let object = sender.object as? UIImage {
-            image = object
-        }
-        tableView.reloadData()
-    }
-    
+
     // 退出登录
     @IBAction func loginOut(_ sender: Any) {
         let alert = UIAlertController(title: "提示", message: "确定退出吗？", preferredStyle: .alert)
@@ -88,7 +77,7 @@ class MineTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         if section == 0 {
-            return 6
+            return 5
         }else{
             return 4
         }
@@ -147,11 +136,13 @@ class MineTableViewController: UITableViewController {
                         let object = JSON(json)
                         if let state = object["STATE"].int {
                             if state == 2 {
-                                label.text = "认证用户"
+                                label.text = "认证成功"
                             }else if state == 3 {
                                 label.text = "认证中"
-                            }else {
-                                label.text = nil
+                            }else if state == 1{
+                                label.text = "注册用户"
+                            }else{
+                                label.text = "注销"
                             }
                         }
                     }
@@ -162,7 +153,7 @@ class MineTableViewController: UITableViewController {
                 }
             }
             if let imageView = cell.viewWithTag(3) as? UIImageView {
-                imageView.isHidden = !(indexPath.row == 2 && indexPath.section == 0)
+                imageView.isHidden = true
             }
         }
 
@@ -194,16 +185,16 @@ class MineTableViewController: UITableViewController {
                 
             }else if indexPath.row == 1 {
                 self.performSegue(withIdentifier: "serversetting", sender: self)
-            }else if indexPath.row == 3 {
+            }else if indexPath.row == 2 {
                 self.performSegue(withIdentifier: "aboutme", sender: self)
-            }else if indexPath.row == 4 {
+            }else if indexPath.row == 3 {
                 let userId = UserDefaults.standard.integer(forKey: "userId")
                 if userId > 0 {
                     self.performSegue(withIdentifier: "feedback", sender: self)
                 }else{
                     self.performSegue(withIdentifier: "login", sender: self)
                 }
-            }else if indexPath.row == 5 {
+            }else if indexPath.row == 4 {
                 let alert = UIAlertController(title: "提示", message: "需要清空缓存吗？", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: { (action) in
                     
@@ -249,18 +240,19 @@ class MineTableViewController: UITableViewController {
         }
     }
 
-  
-
-    
-
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if let controller = segue.destination as? MyInfoTableViewController {
+            controller.delegate = self
+        }
     }
-    */
-
+    
+    func modifyHeader(data: Data?) {
+        if data != nil {
+            image = UIImage(data: data!)
+            tableView.reloadData()
+        }
+    }
 }

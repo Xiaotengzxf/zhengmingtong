@@ -317,7 +317,7 @@ class CommunityEventViewController: UIViewController {
                     let attaches = self?.item?["PARAMS" , "attach"].array ?? self?.item?["params" , "attach"].array
                     for (key , value) in self!.images {
                         for (name , image) in value {
-                            data.append(UIImageJPEGRepresentation(image, 1)!, withName: attaches![Int(key)!]["name"].stringValue, fileName: "\(name).jpg", mimeType: "image/jpg")
+                            data.append(UIImageJPEGRepresentation(image, 0.2)!, withName: attaches![Int(key)!]["name"].stringValue, fileName: "\(name).jpeg", mimeType: "image/jpeg")
                         }
                     }
                     data.append(self!.title!.data(using: .utf8)!, withName: "workName")
@@ -360,7 +360,7 @@ class CommunityEventViewController: UIViewController {
                         str = str.replacingOccurrences(of: "\\\\", with: "\\")
                         data.append(str.data(using: .utf8)!, withName: "params")
                     }
-                    data.append("/bbServer/upload/1482679912797.jpg".data(using: .utf8)!, withName: "sendHeader")
+                    data.append("/bbServer/upload/\(Date().timeIntervalSince1970).jpg".data(using: .utf8)!, withName: "sendHeader")
                 }, to: NetworkManager.installshared.macAddress() + "/bbServer/" + (self!.state == 2 ? NetworkManager.installshared.modify : NetworkManager.installshared.submit)) { (result) in
                     hud?.hide(animated: true)
                     switch result {

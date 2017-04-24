@@ -44,8 +44,10 @@ class CommentTableViewController: UITableViewController , WKUIDelegate , WKNavig
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
         webView = WKWebView(frame: CGRect(x: 0, y: 0, width: SCREENWIDTH, height: SCREENHEIGHT - 64), configuration: config)
-        let request = URLRequest(url: URL(string: linkUrl!)!, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30)
-        webView.load(request)
+        if let url = URL(string: linkUrl ?? "") {
+            let request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30)
+            webView.load(request)
+        }
         webView.uiDelegate = self
         webView.navigationDelegate = self
         webView.sizeToFit()
@@ -159,9 +161,9 @@ class CommentTableViewController: UITableViewController , WKUIDelegate , WKNavig
             if let object = json {
                 if let result = object["result"].int , result == 1000 {
                     self?.newDetail = object["data"]
-                    self?.isZan = object["data" , "isZan"].boolValue
-                    self?.isFavorities = object["data" , "isFavorities"].boolValue
-                    self?.isCanReply = object["data" , "isCanReply"].boolValue
+                    self?.isZan = object["data" , "isZan"].intValue > 0
+                    self?.isFavorities = object["data" , "isFavorites"].intValue > 0
+                    self?.isCanReply = object["data" , "isCanReply"].intValue > 0
                     self?.bbi3.image = UIImage(named : self!.isFavorities ? "icon_menu_like_checked" : "icon_menu_like")
                     self?.bbi5.image = UIImage(named: self!.isZan ? "icon_zaned" : "icon_zan")
                 }else{
@@ -224,8 +226,7 @@ class CommentTableViewController: UITableViewController , WKUIDelegate , WKNavig
                             }
                         }
                     }else{
-                        print(error?.localizedDescription ?? "")
-                        Toast(text: "网络出错，请检查网络").show()
+                        Toast(text: self!.isFavorities ? "取消收藏失败" : "收藏失败").show()
                     }
                 }
             case 4:
@@ -271,8 +272,7 @@ class CommentTableViewController: UITableViewController , WKUIDelegate , WKNavig
                             }
                         }
                     }else{
-                        print(error?.localizedDescription ?? "")
-                        Toast(text: "网络出错，请检查网络").show()
+                        Toast(text: self!.isZan ? "取消点赞失败" : "点赞失败").show()
                     }
                 }
 

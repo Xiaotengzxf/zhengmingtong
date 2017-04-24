@@ -11,6 +11,7 @@ import Toaster
 import ALCameraViewController
 import Alamofire
 import Photos
+import SwiftyJSON
 
 class CertificationViewController: UIViewController {
 
@@ -88,6 +89,23 @@ class CertificationViewController: UIViewController {
                 if let label = self.sView.viewWithTag(4) as? UILabel {
                     label.isHidden = true
                 }
+            }
+        }else if let certification = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
+            if let name = certification["REALNAME"] as? String {
+                nameTextField.text = name
+            }
+            if let cer = certification["IDCARD"] as? String {
+                cerTextField.text = cer
+            }
+            if let city = certification["ADDRESS"] as? String {
+                cityTextField.text = city
+            }
+        }
+        if let json = UserDefaults.standard.object(forKey: "mine") {
+            let object = JSON(json)
+            if let state = object["STATE"].int , state == 2 {
+                submitButton.isEnabled = false
+                submitButton.backgroundColor = UIColor.gray
             }
         }
     }
@@ -185,20 +203,18 @@ class CertificationViewController: UIViewController {
             for (key , image) in self!.images {
                 data.append(UIImageJPEGRepresentation(image, 1)!, withName: "file\(key + 1)", fileName: "\(Date().timeIntervalSince1970).jpg", mimeType: "image/jpg")
             }
-        }, to: NetworkManager.installshared.macAddress() + "/bbServer/" + NetworkManager.installshared.authentication) { (result) in
+        }, to: NetworkManager.installshared.macAddress() + "/bbServer/" + NetworkManager.installshared.authentication) {[weak self] (result) in
             hud.hide(animated: true)
             print(result)
             switch result {
-            case .success(let upload, _, _):
-                upload.responseJSON {[weak self] response in
-                    if var json = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
-                        json["STATE"] = 3
-                        UserDefaults.standard.set(json, forKey: "mine")
-                        UserDefaults.standard.set(["name" : name! , "cer" : cer! , "city" : city! , "assets" : self!.assets], forKey: "certification")
-                        UserDefaults.standard.synchronize()
-                    }
-                    _ = self?.navigationController?.popViewController(animated: true)
+            case .success(_, _, _):
+                if var json = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
+                    json["STATE"] = 3
+                    UserDefaults.standard.set(json, forKey: "mine")
+                    UserDefaults.standard.set(["name" : name! , "cer" : cer! , "city" : city! , "assets" : self!.assets], forKey: "certification")
+                    UserDefaults.standard.synchronize()
                 }
+                _ = self?.navigationController?.popViewController(animated: true)
             case .failure(let encodingError):
                 print(encodingError)
             }

@@ -26,9 +26,9 @@ class AreaDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        imageView.sd_setImage(with: URL(string: item?["areaIcon"].string ?? ""), placeholderImage: UIImage(named: "img_default_big"))
-        areaNameLabel.text = item?["areaName"].string
-        addressLabel.text = item?["areaAddress"].string
+        imageView.sd_setImage(with: URL(string: item?["areaIcon".uppercased()].string ?? ""), placeholderImage: UIImage(named: "img_default_big"))
+        areaNameLabel.text = item?["areaName".uppercased()].string
+        addressLabel.text = item?["areaAddress".uppercased()].string
         attentionImageView.isHidden = !bAttension
         attentionLabel.text = bAttension ? "已关注" : "未关注"
         cancelButton.setTitle(bAttension ? "取消" : "关注", for: .normal)
@@ -52,7 +52,7 @@ class AreaDetailViewController: UIViewController {
     */
     @IBAction func doCancel(_ sender: Any) {
         let userId = UserDefaults.standard.integer(forKey: "userId")
-        let areaId = item?["areaId"].int ?? 0
+        let areaId = item?["areaId".uppercased()].int ?? 0
         if bAttension {
             let hud = showHUD(text: "正在取消关注")
             NetworkManager.installshared.request(type: .post, url: NetworkManager.installshared.cancelErea, params: ["userId" : userId , "areaId" : areaId]){
