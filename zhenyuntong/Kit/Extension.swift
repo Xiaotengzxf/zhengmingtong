@@ -8,6 +8,7 @@
 
 import UIKit
 import MBProgressHUD
+import SwiftyJSON
 
 extension UIViewController {
     func showHUD(text : String) -> MBProgressHUD {
@@ -22,3 +23,12 @@ extension CALayer {
         self.borderColor = color.cgColor
     }
 }
+
+//extension JSON {
+//    subscript(str : String) -> JSON {
+//        if self[str].type == .null {
+//            return self[str.uppercased()]
+//        }
+//        return self[str]
+//    }
+//}

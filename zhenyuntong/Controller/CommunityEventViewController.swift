@@ -78,7 +78,9 @@ class CommunityEventViewController: UIViewController {
                     }else{
                         let url = NetworkManager.installshared.macAddress() + attach["value"].stringValue
                         if url.hasSuffix(".png") || url.hasSuffix(".jpg") || url.hasSuffix(".jpeg"){
-                            uploadFileView.button.sd_setImage(with: URL(string : url), for: .normal)
+                            if let url1 = URL(string : url) {
+                                uploadFileView.button.sd_setImage(with: url1, for: .normal)
+                            }
                         }
                     }
                 }

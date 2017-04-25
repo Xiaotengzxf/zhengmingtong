@@ -129,8 +129,13 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! EventTableViewCell
         let json = items[indexPath.row]
-        cell.nameLabel.text = json["workName"].string
+        cell.nameLabel.text = json["workName"].string ?? json["WORKTYPENAME"].stringValue
         if var submitTime = json["submitTime"].string {
+            if submitTime.characters.count > 10 {
+                submitTime = submitTime.substring(to: submitTime.index(submitTime.startIndex, offsetBy: 10))
+            }
+            cell.dateLabel.text = submitTime
+        }else if var submitTime = json["CREATE_TIME"].string {
             if submitTime.characters.count > 10 {
                 submitTime = submitTime.substring(to: submitTime.index(submitTime.startIndex, offsetBy: 10))
             }
