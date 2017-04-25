@@ -52,44 +52,44 @@ class CertificationViewController: UIViewController {
             if let city = certification["city"] as? String {
                 cityTextField.text = city
             }
-            if let images = certification["images"] as? [Int : String] {
-                if let imageView = self.fView.viewWithTag(2) as? UIImageView {
-                    let assets = PHAsset.fetchAssets(withLocalIdentifiers: [images[0]!], options: nil)
-                    PHImageManager().requestImage(for: assets[0], targetSize: CGSize.zero, contentMode: .aspectFit, options: nil, resultHandler: { (image, data) in
-                        imageView.image = image
-                    })
-                }
-                if let imageView = self.fView.viewWithTag(3) as? UIImageView {
-                    imageView.isHidden = true
-                }
-                if let label = self.fView.viewWithTag(4) as? UILabel {
-                    label.isHidden = true
-                }
-                if let imageView = self.tView.viewWithTag(2) as? UIImageView {
-                    let assets = PHAsset.fetchAssets(withLocalIdentifiers: [images[1]!], options: nil)
-                    PHImageManager().requestImage(for: assets[0], targetSize: CGSize.zero, contentMode: .aspectFit, options: nil, resultHandler: { (image, data) in
-                        imageView.image = image
-                    })
-                }
-                if let imageView = self.tView.viewWithTag(3) as? UIImageView {
-                    imageView.isHidden = true
-                }
-                if let label = self.tView.viewWithTag(4) as? UILabel {
-                    label.isHidden = true
-                }
-                if let imageView = self.sView.viewWithTag(2) as? UIImageView {
-                    let assets = PHAsset.fetchAssets(withLocalIdentifiers: [images[2]!], options: nil)
-                    PHImageManager().requestImage(for: assets[0], targetSize: CGSize.zero, contentMode: .aspectFit, options: nil, resultHandler: { (image, data) in
-                        imageView.image = image
-                    })
-                }
-                if let imageView = self.sView.viewWithTag(3) as? UIImageView {
-                    imageView.isHidden = true
-                }
-                if let label = self.sView.viewWithTag(4) as? UILabel {
-                    label.isHidden = true
-                }
-            }
+//            if let images = certification["images"] as? [Int : String] {
+//                if let imageView = self.fView.viewWithTag(2) as? UIImageView {
+//                    let assets = PHAsset.fetchAssets(withLocalIdentifiers: [images[0]!], options: nil)
+//                    PHImageManager().requestImage(for: assets[0], targetSize: CGSize.zero, contentMode: .aspectFit, options: nil, resultHandler: { (image, data) in
+//                        imageView.image = image
+//                    })
+//                }
+//                if let imageView = self.fView.viewWithTag(3) as? UIImageView {
+//                    imageView.isHidden = true
+//                }
+//                if let label = self.fView.viewWithTag(4) as? UILabel {
+//                    label.isHidden = true
+//                }
+//                if let imageView = self.tView.viewWithTag(2) as? UIImageView {
+//                    let assets = PHAsset.fetchAssets(withLocalIdentifiers: [images[1]!], options: nil)
+//                    PHImageManager().requestImage(for: assets[0], targetSize: CGSize.zero, contentMode: .aspectFit, options: nil, resultHandler: { (image, data) in
+//                        imageView.image = image
+//                    })
+//                }
+//                if let imageView = self.tView.viewWithTag(3) as? UIImageView {
+//                    imageView.isHidden = true
+//                }
+//                if let label = self.tView.viewWithTag(4) as? UILabel {
+//                    label.isHidden = true
+//                }
+//                if let imageView = self.sView.viewWithTag(2) as? UIImageView {
+//                    let assets = PHAsset.fetchAssets(withLocalIdentifiers: [images[2]!], options: nil)
+//                    PHImageManager().requestImage(for: assets[0], targetSize: CGSize.zero, contentMode: .aspectFit, options: nil, resultHandler: { (image, data) in
+//                        imageView.image = image
+//                    })
+//                }
+//                if let imageView = self.sView.viewWithTag(3) as? UIImageView {
+//                    imageView.isHidden = true
+//                }
+//                if let label = self.sView.viewWithTag(4) as? UILabel {
+//                    label.isHidden = true
+//                }
+//            }
         }else if let certification = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
             if let name = certification["REALNAME"] as? String {
                 nameTextField.text = name
@@ -103,9 +103,9 @@ class CertificationViewController: UIViewController {
         }
         if let json = UserDefaults.standard.object(forKey: "mine") {
             let object = JSON(json)
-            if let state = object["STATE"].int , state == 2 {
+            if let state = object["STATE"].int , state == 2 || state == 3 {
                 submitButton.isEnabled = false
-                submitButton.backgroundColor = UIColor.gray
+                submitButton.backgroundColor = UIColor.lightGray
             }
         }
     }
@@ -207,14 +207,16 @@ class CertificationViewController: UIViewController {
             hud.hide(animated: true)
             print(result)
             switch result {
-            case .success(_, _, _):
-                if var json = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
-                    json["STATE"] = 3
-                    UserDefaults.standard.set(json, forKey: "mine")
-                    UserDefaults.standard.set(["name" : name! , "cer" : cer! , "city" : city! , "assets" : self!.assets], forKey: "certification")
-                    UserDefaults.standard.synchronize()
+            case .success(let upload, _, _):
+                upload.responseJSON {[weak self] response in
+                    if var json = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
+                        json["STATE"] = 3
+                        UserDefaults.standard.set(json, forKey: "mine")
+                        UserDefaults.standard.set(["name" : name! , "cer" : cer! , "city" : city!], forKey: "certification")
+                        UserDefaults.standard.synchronize()
+                    }
+                    _ = self?.navigationController?.popViewController(animated: true)
                 }
-                _ = self?.navigationController?.popViewController(animated: true)
             case .failure(let encodingError):
                 print(encodingError)
             }

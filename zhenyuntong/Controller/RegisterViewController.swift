@@ -100,6 +100,7 @@ class RegisterViewController: UIViewController {
             if let object = json {
                 if let result = object["result"].int , result == 1000 {
                     Toast(text: "注册成功").show()
+                    self?.navigationController?.popViewController(animated: true)
                 }else{
                     if let message = object["msg"].string , message.characters.count > 0 {
                         Toast(text: message).show()

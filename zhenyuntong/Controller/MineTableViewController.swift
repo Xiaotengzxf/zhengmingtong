@@ -145,6 +145,8 @@ class MineTableViewController: UITableViewController , MyInfoTableViewController
                                 label.text = "注销"
                             }
                         }
+                    }else{
+                        label.text = ""
                     }
                 }else if indexPath.section == 0 && indexPath.row == 5 {
                     label.text = calculateCacheSize()
