@@ -201,24 +201,31 @@ class CertificationViewController: UIViewController {
             data.append(city!.data(using: .utf8)!, withName: "address")
             data.append("\(UserDefaults.standard.integer(forKey: "userId"))".data(using: .utf8)!, withName: "userId")
             for (key , image) in self!.images {
-                data.append(UIImageJPEGRepresentation(image, 1)!, withName: "file\(key + 1)", fileName: "\(Date().timeIntervalSince1970).jpg", mimeType: "image/jpg")
+                data.append(UIImageJPEGRepresentation(image, 0.2)!, withName: "file\(key + 1)", fileName: "\(Date().timeIntervalSince1970).jpg", mimeType: "image/jpg")
             }
         }, to: NetworkManager.installshared.macAddress() + "/bbServer/" + NetworkManager.installshared.authentication) {[weak self] (result) in
-            hud.hide(animated: true)
             print(result)
             switch result {
             case .success(let upload, _, _):
-                upload.responseJSON {[weak self] response in
-                    if var json = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
-                        json["STATE"] = 3
-                        UserDefaults.standard.set(json, forKey: "mine")
-                        UserDefaults.standard.set(["name" : name! , "cer" : cer! , "city" : city!], forKey: "certification")
-                        UserDefaults.standard.synchronize()
+                upload.responseString {[weak self] response in
+                    hud.hide(animated: true)
+                    if response.result.isSuccess {
+                        if var json = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
+                            json["STATE"] = 3
+                            UserDefaults.standard.set(json, forKey: "mine")
+                            UserDefaults.standard.set(["name" : name! , "cer" : cer! , "city" : city!], forKey: "certification")
+                            UserDefaults.standard.synchronize()
+                        }
+                        _ = self?.navigationController?.popViewController(animated: true)
+                    }else{
+                        Toast(text: "提交失败").show()
                     }
-                    _ = self?.navigationController?.popViewController(animated: true)
+                    
                 }
             case .failure(let encodingError):
+                hud.hide(animated: true)
                 print(encodingError)
+                Toast(text: "提交失败").show()
             }
         }
     }
