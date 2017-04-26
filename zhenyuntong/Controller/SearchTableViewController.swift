@@ -22,11 +22,8 @@ class SearchTableViewController: UITableViewController , IQDropDownTextFieldDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let format = DateFormatter()
-        format.dateFormat = "yyyy-MM-dd"
-        dateString = format.string(from: Date())
         dateTextField.dropDownMode = .datePicker
-        dateTextField.date = Date()
+        
         tableView.register(UINib(nibName: "EventTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
         tableView.tableFooterView = UIView()
         tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: SCREENWIDTH, height: 164)
@@ -167,6 +164,12 @@ class SearchTableViewController: UITableViewController , IQDropDownTextFieldDele
         let format = DateFormatter()
         format.dateFormat = "yyyy-MM-dd"
         dateString = format.string(from: date!)
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField == dateTextField && dateTextField.date == nil {
+            dateTextField.date = Date()
+        }
     }
 
     /*

@@ -22,9 +22,15 @@ class VerticalViewController: UIViewController, RAReorderableLayoutDelegate, RAR
         collectionView.register(UINib(nibName: "MCollectionReusableView", bundle: nil), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "header")
         collectionView.collectionViewLayout = RAReorderableLayout()
         let temp = items
+        var indexs : [Int] = []
         for (index , item) in temp.enumerated() {
             if let actionType = item["actionType"].int , actionType >= 10 {
                 filterItems.append(item)
+                indexs.append(index)
+            }
+        }
+        if indexs.count > 0 {
+            for index in indexs.reversed() {
                 items.remove(at: index)
             }
         }

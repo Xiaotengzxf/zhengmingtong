@@ -137,8 +137,12 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
                         if items.count == 0 {
                             UserDefaults.standard.removeObject(forKey: "local")
                         }else{
-                            UserDefaults.standard.set(items, forKey: "local")
-                            UserDefaults.standard.synchronize()
+                            if var local = UserDefaults.standard.object(forKey: "local") as? [[String : Any]] {
+                                local.remove(at: index)
+                                UserDefaults.standard.set(local, forKey: "local")
+                                UserDefaults.standard.synchronize()
+                            }
+                            
                         }
                     }
                 }
@@ -199,13 +203,26 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
                 }
             }
         }
+        if tag == 1 || tag == 3 {
+            if let reason = json["failReason"].string {
+                cell.resultLabel.text = reason
+            }else {
+                cell.resultLabel.text = nil
+            }
+        }else{
+            cell.resultLabel.text = nil
+        }
          // 2 处理中 3 已完成 4 已终止
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        if tag == 1 || tag == 3 {
+            return 90
+        }else{
+            return 80
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

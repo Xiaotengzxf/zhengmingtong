@@ -148,7 +148,7 @@ class MineTableViewController: UITableViewController , MyInfoTableViewController
                     }else{
                         label.text = ""
                     }
-                }else if indexPath.section == 0 && indexPath.row == 5 {
+                }else if indexPath.section == 0 && indexPath.row == 4 {
                     label.text = calculateCacheSize()
                 }else{
                     label.text = nil

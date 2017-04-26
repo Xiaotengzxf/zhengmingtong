@@ -339,12 +339,21 @@ class CommunityEventViewController: UIViewController {
                         }
                     }
                     data.append(self!.title!.data(using: .utf8)!, withName: "workName")
-                    var workTypeId = 0
-                    workTypeId = self!.item!["WORKTYPEID"].intValue
-                    if workTypeId == 0 {
-                        workTypeId = self!.item!["workTypeId"].intValue
+                    if self!.state == 2 {
+                        var workId = 0
+                        workId = self!.item!["WORKID"].intValue
+                        if workId == 0 {
+                            workId = self!.item!["workId"].intValue
+                        }
+                        data.append("\(workId)".data(using: .utf8)!, withName: "workId")
+                    }else{
+                        var workTypeId = 0
+                        workTypeId = self!.item!["WORKTYPEID"].intValue
+                        if workTypeId == 0 {
+                            workTypeId = self!.item!["workTypeId"].intValue
+                        }
+                        data.append("\(workTypeId)".data(using: .utf8)!, withName: "workTypeId")
                     }
-                    data.append("\(workTypeId)".data(using: .utf8)!, withName: "workTypeId")
                     if let json = UserDefaults.standard.object(forKey: "mine") {
                         let object = JSON(json)
                         var nickName = ""
@@ -355,8 +364,8 @@ class CommunityEventViewController: UIViewController {
                         data.append(nickName.data(using: .utf8)!, withName: "sendName")
                     }
                     data.append("0".data(using: .utf8)!, withName: "areaUser")
-                    data.append("\(UserDefaults.standard.integer(forKey: "userId"))".data(using: .utf8)!, withName: "userId")
-                    data.append("\(UserDefaults.standard.integer(forKey: "areaId"))".data(using: .utf8)!, withName: "areaId")
+                    data.append("\(UserDefaults.standard.integer(forKey: "userId"))".data(using: .utf8)!, withName: self!.state == 2 ? "senderId" : "userId")
+                    data.append("\(UserDefaults.standard.integer(forKey: "areaId"))".data(using: .utf8)!, withName: self!.state == 2 ? "toUser" : "areaId")
                     var str = self?.item?["PARAMS"].rawString() ?? ""
                     if str.characters.count == 0 {
                         str = self?.item?["params"].rawString() ?? ""
@@ -380,10 +389,10 @@ class CommunityEventViewController: UIViewController {
                     }
                     data.append("/bbServer/upload/\(Date().timeIntervalSince1970).jpg".data(using: .utf8)!, withName: "sendHeader")
                 }, to: NetworkManager.installshared.macAddress() + "/bbServer/" + (self!.state == 2 ? NetworkManager.installshared.modify : NetworkManager.installshared.submit)) { (result) in
-                    hud?.hide(animated: true)
                     switch result {
                     case .success(let upload, _, _):
                         upload.responseJSON {[weak self] response in
+                            hud?.hide(animated: true)
                             if let value = response.result.value {
                                 let json = JSON(value)
                                 if let result = json["result"].int , result == 1000 {
@@ -404,7 +413,9 @@ class CommunityEventViewController: UIViewController {
                             }
                         }
                     case .failure(let encodingError):
+                        hud?.hide(animated: true)
                         print(encodingError)
+                        Toast(text: "提交失败").show()
                     }
                 }
                 

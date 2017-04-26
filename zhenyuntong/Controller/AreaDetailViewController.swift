@@ -25,10 +25,26 @@ class AreaDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        imageView.sd_setImage(with: URL(string: item?["areaIcon".uppercased()].string ?? ""), placeholderImage: UIImage(named: "img_default_big"))
-        areaNameLabel.text = item?["areaName".uppercased()].string
-        addressLabel.text = item?["areaAddress".uppercased()].string
+        if let icon = item?["areaIcon".uppercased()].string {
+            let url = icon.hasPrefix("http") ? icon : "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=\(icon)"
+            imageView.sd_setImage(with: URL(string: url), placeholderImage: UIImage(named: "img_default_big"))
+        }else if let icon = item?["areaIcon"].string {
+            let url = icon.hasPrefix("http") ? icon : "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=\(icon)"
+            imageView.sd_setImage(with: URL(string: url), placeholderImage: UIImage(named: "img_default_big"))
+        }else{
+            imageView.image = UIImage(named: "img_default_big")
+        }
+        
+        if let areaName = item?["areaName".uppercased()].string {
+            areaNameLabel.text = areaName
+        }else if let areaName = item?["areaName"].string {
+            areaNameLabel.text = areaName
+        }
+        if let address = item?["areaAddress".uppercased()].string {
+            addressLabel.text = address
+        }else if let address = item?["areaAddress"].string {
+            addressLabel.text = address
+        }
         attentionImageView.isHidden = !bAttension
         attentionLabel.text = bAttension ? "已关注" : "未关注"
         cancelButton.setTitle(bAttension ? "取消" : "关注", for: .normal)

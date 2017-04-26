@@ -73,8 +73,12 @@ class AttentionTableViewController: UITableViewController , DZNEmptyDataSetSourc
 
         let json = attention[indexPath.row]
         if let imageView = cell.contentView.viewWithTag(4) as? UIImageView {
-            if let icon = json["areaIcon"].string {
-                imageView.sd_setImage(with: URL(string: icon), placeholderImage: UIImage(named: "img_default_big"))
+            if let icon = json["areaIcon".uppercased()].string {
+                let url = icon.hasPrefix("http") ? icon : "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=\(icon)"
+                imageView.sd_setImage(with: URL(string: url), placeholderImage: UIImage(named: "img_default_big"))
+            }else if let icon = json["areaIcon"].string {
+                let url = icon.hasPrefix("http") ? icon : "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=\(icon)"
+                imageView.sd_setImage(with: URL(string: url), placeholderImage: UIImage(named: "img_default_big"))
             }else{
                 imageView.image = UIImage(named: "img_default_big")
             }

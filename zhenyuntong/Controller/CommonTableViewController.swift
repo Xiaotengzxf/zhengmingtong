@@ -12,14 +12,16 @@ import SDCycleScrollView
 import MJRefresh
 import Toaster
 import SKPhotoBrowser
+import DZNEmptyDataSet
 
-class CommonTableViewController: UITableViewController , SDCycleScrollViewDelegate {
+class CommonTableViewController: UITableViewController , SDCycleScrollViewDelegate , DZNEmptyDataSetSource , DZNEmptyDataSetDelegate {
     
     var cycleScrollView : SDCycleScrollView?
     var item : JSON?
     var page = 0
     var tableData : [JSON] = []
     var ads : [JSON] = []
+    var nShowEmpty = 2 // 1 无网络 2 加载中 3  无数据  4 未登录 5 未选择小区
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,9 +48,9 @@ class CommonTableViewController: UITableViewController , SDCycleScrollViewDelega
             self?.page += 1
             self?.loadData()
         })
-        tableView.mj_header.beginRefreshing()
+        loadData()
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.tableFooterView = UIView()
+        tableView.mj_footer.isHidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -72,19 +74,29 @@ class CommonTableViewController: UITableViewController , SDCycleScrollViewDelega
                             self?.tableData.removeAll()
                         }
                         if let news = object["data"].array {
+                            if news.count > 0 {
+                                self?.tableView.mj_footer.isHidden = false
+                            }
                             self?.tableData += news
                             if news.count < 20 {
                                 self?.tableView.mj_footer.endRefreshingWithNoMoreData()
                             }
                         }
+                        if self?.page == 0 && self?.tableData.count == 0 {
+                            self?.nShowEmpty = 3
+                        }
                         self?.tableView.reloadData()
                     }else{
-                        if let message = object["msg"].string , message.characters.count > 0 {
-                            Toast(text: message).show()
+                        if self?.page == 0 && self?.tableData.count == 0 {
+                            self?.nShowEmpty = 3
+                            self?.tableView.reloadData()
                         }
                     }
                 }else{
-                    
+                    if self?.page == 0 && self?.tableData.count == 0 {
+                        self?.nShowEmpty = 1
+                        self?.tableView.reloadData()
+                    }
                 }
             }
         }else{
@@ -113,19 +125,29 @@ class CommonTableViewController: UITableViewController , SDCycleScrollViewDelega
                             self?.tableData.removeAll()
                         }
                         if let news = object["data" , "news"].array {
+                            if news.count > 0 {
+                                self?.tableView.mj_footer.isHidden = false
+                            }
                             self?.tableData += news
                             if news.count < 20 {
                                 self?.tableView.mj_footer.endRefreshingWithNoMoreData()
                             }
                         }
+                        if self?.page == 0 && self?.tableData.count == 0 {
+                            self?.nShowEmpty = 3
+                        }
                         self?.tableView.reloadData()
                     }else{
-                        if let message = object["msg"].string , message.characters.count > 0 , message.characters.count > 0{
-                            Toast(text: message).show()
+                        if self?.page == 0 && self?.tableData.count == 0 {
+                            self?.nShowEmpty = 3
+                            self?.tableView.reloadData()
                         }
                     }
                 }else{
-                    
+                    if self?.page == 0 && self?.tableData.count == 0 {
+                        self?.nShowEmpty = 1
+                        self?.tableView.reloadData()
+                    }
                 }
                 
             }
@@ -236,5 +258,81 @@ class CommonTableViewController: UITableViewController , SDCycleScrollViewDelega
         // Pass the selected object to the new view controller.
     }
     */
+    
+    // MARK: - 空数据
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView!) -> UIColor! {
+        return UIColor.white
+    }
+    
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        var name = ""
+        if nShowEmpty == 1 {
+            name = "load_fail"
+        }else if nShowEmpty == 2 {
+            name = "jiazaizhong"
+        }else {
+            name = "empty"
+        }
+        return UIImage(named: name)
+    }
+    
+    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        var message = ""
+        if nShowEmpty == 1 {
+            message = "世界上最遥远的距离就是没有WIFI...\n请点击屏幕重新加载！"
+        }else if nShowEmpty == 2 {
+            message = "加载是件正经事儿，走心加载中..."
+        }else if nShowEmpty == 3 {
+            message = "空空如也，啥子都没有噢！"
+        }else if nShowEmpty == 4 {
+            message = "请先登录"
+        }else if nShowEmpty == 5 {
+            message = "请先选择社区"
+        }
+        let att = NSMutableAttributedString(string: message)
+        att.addAttributes([NSFontAttributeName : UIFont.systemFont(ofSize: 13)], range: NSMakeRange(0, att.length))
+        return att
+    }
+    
+    func emptyDataSetShouldAnimateImageView(_ scrollView: UIScrollView!) -> Bool {
+        return nShowEmpty == 2
+    }
+    
+    func emptyDataSet(_ scrollView: UIScrollView!, didTap view: UIView!) {
+        if nShowEmpty > 0 && nShowEmpty != 2 {
+            if nShowEmpty == 4 {
+                if let controller = storyboard?.instantiateViewController(withIdentifier: "login") {
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            }else if nShowEmpty == 5 {
+                if let controller = storyboard?.instantiateViewController(withIdentifier: "attention") as? AttentionTableViewController {
+                    controller.bChooseArea = true
+                    controller.title = "选择社区"
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            }else{
+                nShowEmpty = 2
+                tableView.reloadData()
+                loadData()
+            }
+        }
+    }
+    
+    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView!) -> Bool {
+        return nShowEmpty > 0
+    }
+    
+    func imageAnimation(forEmptyDataSet scrollView: UIScrollView!) -> CAAnimation! {
+        let animation = CABasicAnimation(keyPath: "transform")
+        animation.fromValue = NSValue(caTransform3D: CATransform3DMakeRotation(0.0, 0.0, 0.0, 1.0))
+        animation.toValue = NSValue(caTransform3D: CATransform3DMakeRotation(CGFloat(Double.pi / 2), 0.0, 0.0, 1.0))
+        animation.duration = 0.5
+        animation.isCumulative = true
+        animation.repeatCount = MAXFLOAT
+        animation.autoreverses = false
+        animation.fillMode = kCAFillModeForwards
+        return animation
+    }
+
 
 }
