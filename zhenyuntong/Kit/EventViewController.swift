@@ -28,6 +28,8 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
         tableView.register(UINib(nibName: "EventTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
        
         tableView.tableFooterView = UIView()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(EventViewController.handleNotification(notification:)), name: Notification.Name("eventVC"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,6 +70,10 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     func loadData()  {
@@ -117,6 +123,26 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
         if let view = sender.view {
             view.removeFromSuperview()
             self.tableView.mj_header.beginRefreshing()
+        }
+    }
+    
+    func handleNotification(notification : Notification) {
+        if tag == 4 {
+            if let tag = notification.object as? Int {
+                if tag == 1 {
+                    if let userInfo = notification.userInfo as? [String : Int] {
+                        let index = userInfo["index"] ?? 0
+                        items.remove(at: index)
+                        tableView.reloadData()
+                        if items.count == 0 {
+                            UserDefaults.standard.removeObject(forKey: "local")
+                        }else{
+                            UserDefaults.standard.set(items, forKey: "local")
+                            UserDefaults.standard.synchronize()
+                        }
+                    }
+                }
+            }
         }
     }
     

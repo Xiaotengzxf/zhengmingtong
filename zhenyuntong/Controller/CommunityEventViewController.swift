@@ -91,6 +91,8 @@ class CommunityEventViewController: UIViewController {
         
         if state == 0 {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "草稿箱", style: .plain, target: self, action: #selector(CommunityEventViewController.dropInDraft))
+        }else if state == 4 {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "删除", style: .plain, target: self, action: #selector(CommunityEventViewController.dropInDraft))
         }
         
     }
@@ -106,27 +108,41 @@ class CommunityEventViewController: UIViewController {
     
     // 添加进草稿箱
     func dropInDraft() {
-        self.view.endEditing(true)
-        var dic : [String : String] = [:]
-        if images.count > 0 {
-            for (index , values) in images {
-                for (key , _) in values {
-                    dic["\(index)"] = key
+        if state == 4  {
+            let alert = UIAlertController(title: "提示", message: "您确定要删除吗？", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: {(action) in
+                
+            }))
+            alert.addAction(UIAlertAction(title: "删除", style: .default, handler: {[weak self]  (action) in
+                NotificationCenter.default.post(name: Notification.Name("eventVC"), object: 1, userInfo: ["index" : self!.index])
+                self?.navigationController?.popViewController(animated: true)
+            }))
+            present(alert, animated: true, completion: { 
+                
+            })
+        }else {
+            self.view.endEditing(true)
+            var dic : [String : String] = [:]
+            if images.count > 0 {
+                for (index , values) in images {
+                    for (key , _) in values {
+                        dic["\(index)"] = key
+                    }
                 }
             }
+            if var local = UserDefaults.standard.object(forKey: "local") as? [Any] {
+                item?["workName"].string = self.title!
+                item?["submitTime"].string = DateManager.installShared.getCurrentTimeString()
+                local.append(["item" : item!.dictionaryObject! , "images" : dic , "regex" : regexes])
+                UserDefaults.standard.set(local, forKey: "local")
+                UserDefaults.standard.synchronize()
+            }else{
+                let local = [["item" : item!.dictionaryObject! , "images" : dic , "regex" : regexes]]
+                UserDefaults.standard.set(local, forKey: "local")
+                UserDefaults.standard.synchronize()
+            }
+            _ = self.navigationController?.popViewController(animated: true)
         }
-        if var local = UserDefaults.standard.object(forKey: "local") as? [Any] {
-            item?["workName"].string = self.title!
-            item?["submitTime"].string = DateManager.installShared.getCurrentTimeString()
-            local.append(["item" : item!.dictionaryObject! , "images" : dic , "regex" : regexes])
-            UserDefaults.standard.set(local, forKey: "local")
-            UserDefaults.standard.synchronize()
-        }else{
-            let local = [["item" : item!.dictionaryObject! , "images" : dic , "regex" : regexes]]
-            UserDefaults.standard.set(local, forKey: "local")
-            UserDefaults.standard.synchronize()
-        }
-        _ = self.navigationController?.popViewController(animated: true)
     }
     
     func handleNotification(sender : Notification)  {
