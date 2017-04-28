@@ -78,10 +78,13 @@ class CommunityViewController: UIViewController , UICollectionViewDataSource , U
             if areaId > 0 {
                 //emptyView.isHidden = true
             }else{
+                self.emptyImageView.image = UIImage(named: "empty")
                 loginTipLabel.text = "请先选择一个社区"
+                emptyView.isHidden = false
             }
             
         }else{
+            self.emptyImageView.image = UIImage(named: "empty")
             loginTipLabel.text = "请先登录"
             emptyView.isHidden = false
         }
@@ -148,7 +151,7 @@ class CommunityViewController: UIViewController , UICollectionViewDataSource , U
             self.loginTipLabel.text = "加载是件正经事儿，正在走心加载中..."
             let animation = CABasicAnimation(keyPath: "transform.rotation.z")
             animation.fromValue = 0
-            animation.toValue = M_PI * 2
+            animation.toValue = Double.pi * 2
             animation.duration = 2
             animation.autoreverses = false
             animation.repeatCount = HUGE
@@ -175,6 +178,7 @@ class CommunityViewController: UIViewController , UICollectionViewDataSource , U
                                 self?.regexes = dictionary
                             }
                             let value = JSON.parse(json)
+                            self!.items.removeAll()
                             self!.items += value.arrayValue
                             
                             self?.collectionView.reloadData()

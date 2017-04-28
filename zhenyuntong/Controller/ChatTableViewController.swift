@@ -48,18 +48,20 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
                 nShowEmpty = 2
             }else{
                 nShowEmpty = 5
+                chatJson.removeAll()
                 tableView.reloadData()
-                return
             }
         }else{
             nShowEmpty = 4
+            chatJson.removeAll()
             tableView.reloadData()
-            return
         }
         if nShowEmpty == 2 {
             loadData()
         }else{
-            tableView.mj_header.beginRefreshing()
+            if nShowEmpty != 4 && nShowEmpty != 5 {
+                tableView.mj_header.beginRefreshing()
+            }
         }
     }
 

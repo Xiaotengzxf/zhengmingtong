@@ -19,6 +19,7 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
     var items : [JSON] = []
     var images : [[String : String]] = []
     var regexes : [[String : String]] = []
+    var emptyView : EmptyView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +31,7 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
         tableView.tableFooterView = UIView()
         
         NotificationCenter.default.addObserver(self, selector: #selector(EventViewController.handleNotification(notification:)), name: Notification.Name("eventVC"), object: nil)
+        self.automaticallyAdjustsScrollViewInsets = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -64,6 +66,7 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
                 self?.loadData()
             })
             tableView.mj_header.beginRefreshing()
+            tableView.mj_footer.isHidden = true
         }
     }
     
@@ -89,7 +92,14 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
                         self?.items.removeAll()
                     }
                     if let array = object["data"].array {
+                        if array.count > 0 && self!.emptyView != nil {
+                            self?.emptyView?.removeFromSuperview()
+                            self?.emptyView = nil
+                        }
                         self?.items += array
+                        if array.count > 0 {
+                            self?.tableView.mj_footer.isHidden = false
+                        }
                         if array.count < 20 {
                             self?.tableView.mj_footer.endRefreshingWithNoMoreData()
                         }
@@ -106,22 +116,23 @@ class EventViewController: UIViewController , UITableViewDataSource , UITableVie
     }
     
     func addEmptyView() {
-        if let emptyView = Bundle.main.loadNibNamed("EmptyView", owner: nil, options: nil)?.first as? EmptyView {
-            emptyView.label.text = "空空如也，啥子都没有噢！"
-            emptyView.translatesAutoresizingMaskIntoConstraints = false
-            self.view.addSubview(emptyView)
+        
+        if  emptyView == nil {
+            emptyView = Bundle.main.loadNibNamed("EmptyView", owner: nil, options: nil)?.first as? EmptyView
+            emptyView?.label.text = "空空如也，啥子都没有噢！"
+            emptyView?.translatesAutoresizingMaskIntoConstraints = false
+            self.view.addSubview(emptyView!)
             let tap = UITapGestureRecognizer(target: self, action: #selector(EventViewController.tapEvent(sender:)))
             tap.numberOfTapsRequired = 1
-            emptyView.addGestureRecognizer(tap)
+            emptyView?.addGestureRecognizer(tap)
             
-            self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyView]|", options: .directionLeadingToTrailing, metrics: nil, views: ["emptyView" : emptyView]))
-            self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyView]|", options: .directionLeadingToTrailing, metrics: nil, views: ["emptyView" : emptyView]))
+            self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyView]|", options: .directionLeadingToTrailing, metrics: nil, views: ["emptyView" : emptyView!]))
+            self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyView]|", options: .directionLeadingToTrailing, metrics: nil, views: ["emptyView" : emptyView!]))
         }
     }
     
     func tapEvent(sender : UITapGestureRecognizer) {
-        if let view = sender.view {
-            view.removeFromSuperview()
+        if let _ = sender.view {
             self.tableView.mj_header.beginRefreshing()
         }
     }

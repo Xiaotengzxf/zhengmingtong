@@ -45,6 +45,15 @@ class InfoLookTableViewController: UITableViewController , SDCycleScrollViewDele
         NotificationCenter.default.addObserver(self, selector: #selector(InfoLookTableViewController.handleNotification(sender:)), name: Notification.Name(NotificationName.InfoLook.rawValue), object: nil)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let areaName = UserDefaults.standard.object(forKey: "areaName") as? String {
+            button?.setTitle(areaName, for: .normal)
+        }else{
+            button?.setTitle("未关注", for: .normal)
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if infoLookJson != nil {
@@ -122,11 +131,6 @@ class InfoLookTableViewController: UITableViewController , SDCycleScrollViewDele
         rightView.addSubview(arrowImageView)
         button = UIButton(frame: CGRect(x: 0, y: 0, width: 98, height: 44))
         button?.contentHorizontalAlignment = .right
-        if let areaName = UserDefaults.standard.object(forKey: "areaName") as? String {
-            button?.setTitle(areaName, for: .normal)
-        }else{
-            button?.setTitle("未关注", for: .normal)
-        }
         button?.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button?.addTarget(self, action: #selector(InfoLookTableViewController.changeArea), for: .touchUpInside)
         rightView.addSubview(button!)
