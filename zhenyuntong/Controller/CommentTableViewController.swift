@@ -203,6 +203,8 @@ class CommentTableViewController: UITableViewController , WKUIDelegate , WKNavig
                         self.view.window?.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[commentView(width)]", options: .directionLeadingToTrailing, metrics: ["width" : SCREENWIDTH], views: ["commentView" : commentView!]))
                         self.view.window?.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[commentView(height)]|", options: .directionLeadingToTrailing, metrics: ["height" : SCREENHEIGHT - 64], views: ["commentView" : commentView!]))
                     }
+                }else{
+                    Toast(text:"该新闻暂不支持评论。").show()
                 }
             case 3:
                 if !singleTap {
