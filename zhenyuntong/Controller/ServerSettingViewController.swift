@@ -45,7 +45,7 @@ class ServerSettingViewController: UIViewController {
         if ip == nil || ip!.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {
             Toast(text: "ip地址不能为空").show()
             return
-        }else if !Invalidate.validate(regex: "(\\d{3}.){4}", value: ip!) {
+        }else if !Invalidate.validate(regex: "(\\d{1,3}.){4}", value: ip!) {
             Toast(text: "ip地址输入有误").show()
             return
         }else if port == nil || port!.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {

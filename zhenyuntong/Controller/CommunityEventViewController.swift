@@ -79,7 +79,7 @@ class CommunityEventViewController: UIViewController {
                         let url = NetworkManager.installshared.macAddress() + attach["value"].stringValue
                         if url.hasSuffix(".png") || url.hasSuffix(".jpg") || url.hasSuffix(".jpeg"){
                             if let url1 = URL(string : url) {
-                                uploadFileView.button.sd_setImage(with: url1, for: .normal)
+                                uploadFileView.button.sd_setImage(with: url1, for: .normal, placeholderImage: UIImage(named: "img_default_big"))
                             }
                         }
                     }
@@ -367,10 +367,10 @@ class CommunityEventViewController: UIViewController {
                     data.append("\(UserDefaults.standard.integer(forKey: "userId"))".data(using: .utf8)!, withName: self!.state == 2 ? "senderId" : "userId")
                     data.append("\(UserDefaults.standard.integer(forKey: "areaId"))".data(using: .utf8)!, withName: self!.state == 2 ? "toUser" : "areaId")
                     var str = self?.item?["PARAMS"].rawString() ?? ""
-                    if str.characters.count == 0 {
+                    if str.characters.count == 0 || str == "null" {
                         str = self?.item?["params"].rawString() ?? ""
                     }
-                    if str.characters.count > 0 {
+                    if str.characters.count > 0 && str != "null" {
                         
                         if let array = self?.regexes , array.count > 0 {
                             for (key , regex) in array {

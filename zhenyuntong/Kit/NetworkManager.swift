@@ -70,6 +70,7 @@ class NetworkManager {
     }
     
     func request(type : HTTPMethod , url : String , params : Parameters? , callback : @escaping (JSON? , Error?)->())  {
+        print("\(macAddress())/bbServer/\(url)")
         Alamofire.request(macAddress() + "/bbServer/" + url, method: type, parameters: params, encoding: URLEncoding.default, headers: nil).responseJSON { (response) in
             if let json = response.result.value {
                 print(json)

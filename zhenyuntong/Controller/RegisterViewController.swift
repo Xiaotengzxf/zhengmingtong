@@ -13,20 +13,18 @@ import KeychainAccess
 
 class RegisterViewController: UIViewController {
 
-    @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var pwdTextField: UITextField!
     @IBOutlet weak var repwdTextField: UITextField!
     @IBOutlet weak var mobileTextField: UITextField!
     @IBOutlet weak var nickTextField: UITextField!
-    @IBOutlet weak var codeTextField: UITextField!
     @IBOutlet weak var registerButton: UIButton!
-    @IBOutlet weak var codeButton: UIButton!
-    var timer : Timer?
-    var count = 60
+    @IBOutlet weak var btnTip: UIButton!
+    //var timer : Timer?
+    //var count = 60
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        registerButton.isEnabled = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -34,48 +32,45 @@ class RegisterViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func requestCode(_ sender: Any) {
+//    @IBAction func requestCode(_ sender: Any) {
+//        self.view.endEditing(true)
+//        let mobile = mobileTextField.text
+//        if mobile == nil || mobile?.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {
+//            Toast(text: "请输入手机号").show()
+//            return
+//        }else if !Invalidate.isPhoneNumber(phoneNumber: mobile!){
+//            Toast(text: "手机号输入有误！").show()
+//            return
+//        }
+//        if count == 60 {
+//            if timer == nil {
+//                codeButton.isEnabled = false
+//                timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(RegisterViewController.startTimer(sender:)), userInfo: nil, repeats: true)
+//                timer?.fire()
+//            }
+//            
+//        }
+//        Toast(text: "获取验证码成功").show()
+//    }
+
+    @IBAction func doRegister(_ sender: Any) {
         self.view.endEditing(true)
+        //let name = nameTextField.text
+        let pwd = pwdTextField.text
+        let repwd = repwdTextField.text
         let mobile = mobileTextField.text
+        let nick = nickTextField.text
         if mobile == nil || mobile?.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {
             Toast(text: "请输入手机号").show()
             return
         }else if !Invalidate.isPhoneNumber(phoneNumber: mobile!){
             Toast(text: "手机号输入有误！").show()
             return
-        }
-        if count == 60 {
-            if timer == nil {
-                codeButton.isEnabled = false
-                timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(RegisterViewController.startTimer(sender:)), userInfo: nil, repeats: true)
-                timer?.fire()
-            }
-            
-        }
-        Toast(text: "获取验证码成功").show()
-    }
-
-    @IBAction func doRegister(_ sender: Any) {
-        self.view.endEditing(true)
-        let name = nameTextField.text
-        let pwd = pwdTextField.text
-        let repwd = repwdTextField.text
-        let mobile = mobileTextField.text
-        let nick = nickTextField.text
-        if name == nil || name?.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {
-            Toast(text: "请输入用户名").show()
-            return
         }else if pwd == nil || pwd?.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {
             Toast(text: "请输入密码").show()
             return
         }else if repwd != pwd {
             Toast(text: "二次密码输入不一致").show()
-            return
-        }else if mobile == nil || mobile?.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {
-            Toast(text: "请输入手机号").show()
-            return
-        }else if !Invalidate.isPhoneNumber(phoneNumber: mobile!){
-            Toast(text: "手机号输入有误！").show()
             return
         }else if nick == nil || nick?.trimmingCharacters(in: .whitespacesAndNewlines).characters.count == 0 {
             Toast(text: "请输入昵称").show()
@@ -94,7 +89,7 @@ class RegisterViewController: UIViewController {
         
         let userId = UserDefaults.standard.integer(forKey: "userId")
         let hud = showHUD(text: "提交中...")
-        NetworkManager.installshared.request(type: .post, url: NetworkManager.installshared.regist, params: ["userId" : userId , "nickName" : nick! , "account" : name! , "password" : DESHelper.encryptUseDES(pwd!) , "channel" : 1 , "mobile" : mobile! , "registType" : 1 , "userType" : 1 , "imei" : imei , "imsi" : imei]){ // imei imsi
+        NetworkManager.installshared.request(type: .post, url: NetworkManager.installshared.regist, params: ["userId" : userId , "nickName" : nick! , "password" : DESHelper.encryptUseDES(pwd!) , "channel" : 1 , "mobile" : mobile! , "registType" : 1 , "userType" : 1 , "imei" : imei , "imsi" : imei]){ // imei imsi "account" : name!
             [weak self] (json , error) in
             hud.hide(animated: true)
             if let object = json {
@@ -112,20 +107,24 @@ class RegisterViewController: UIViewController {
         }
     }
     
-    func startTimer(sender : Timer) {
-        count -= 1
-        if count <= 0 {
-            count = 60
-            codeButton.setTitle("获取验证码", for: .normal)
-            codeButton.isEnabled = true
-            timer?.invalidate()
-            timer = nil
-        }else{
-            codeButton.setTitle("\(count)秒可重发", for: .normal)
-        }
-        
-    }
+//    func startTimer(sender : Timer) {
+//        count -= 1
+//        if count <= 0 {
+//            count = 60
+//            codeButton.setTitle("获取验证码", for: .normal)
+//            codeButton.isEnabled = true
+//            timer?.invalidate()
+//            timer = nil
+//        }else{
+//            codeButton.setTitle("\(count)秒可重发", for: .normal)
+//        }
+//        
+//    }
     
+    @IBAction func agreeTip(_ sender: Any) {
+        btnTip.isSelected = !btnTip.isSelected
+        registerButton.isEnabled = btnTip.isSelected
+    }
     /*
     // MARK: - Navigation
 
