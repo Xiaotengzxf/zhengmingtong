@@ -110,9 +110,12 @@ class AreaDetailViewController: UIViewController {
         }
         
     }
+    
     @IBAction func doSend(_ sender: Any) {
         if bAttension {
-            
+            if let chatnew = self.storyboard?.instantiateViewController(withIdentifier: "chatnew") as? ChatNewViewController {
+                self.navigationController?.pushViewController(chatnew, animated: true)
+            }
         }else{
             Toast(text: "请先关注社区").show()
         }

@@ -18,6 +18,15 @@ class ServerSettingViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        if let mac = UserDefaults.standard.object(forKey: "mac") as? String {
+            let array = mac.components(separatedBy: ":")
+            if array.count == 2 {
+                let startIndex = array[0].startIndex
+                let cutIndex = array[0].index(startIndex, offsetBy: 7)
+                ipTextfield.text = array[0].substring(from:cutIndex)
+                portTextfield.text = array[1]
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {

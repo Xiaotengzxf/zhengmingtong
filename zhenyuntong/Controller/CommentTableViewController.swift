@@ -235,12 +235,23 @@ class CommentTableViewController: UITableViewController , WKUIDelegate , WKNavig
                 print(4)
                 // 1.创建分享参数
                 let shareParames = NSMutableDictionary()
-                
+                var imgUrl = ""
+                if imageUrl != nil {
+                    imgUrl = imageUrl!
+                    if !imgUrl.hasPrefix("http") {
+                        imgUrl = "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=" + imgUrl
+                    }
+                }else{
+                    imgUrl = newDetail?["imgUrl"].string ?? "http://www.mob.com/images/logo_black.png"
+                    if !imgUrl.hasPrefix("http") {
+                        imgUrl = "http://120.77.56.220:8080/BBV3Web/flashFileUpload/downloadHandler.do?fileId=" + imgUrl
+                    }
+                }
                 shareParames.ssdkSetupShareParams(byText: "\(newDetail?["summary"].string ?? "暂无内容")",
-                    images : "\(imageUrl != nil ? imageUrl! : (newDetail?["imgUrl"].string ?? ""))",
+                    images : "\(imageUrl != nil ? imageUrl! : newDetail?["imgUrl"].string ?? "http://www.mob.com/images/logo_black.png")",
                                                   url : NSURL(string:self.linkUrl!) as URL!,
                                                   title : "\(newDetail?["title"].string ?? "暂无标题")",
-                                                  type : SSDKContentType.image)
+                                                  type : SSDKContentType.auto)
                 ShareSDK.showShareActionSheet(self.view, items: nil, shareParams: shareParames, onShareStateChanged: { (state, type, content, entity, error, finished) in
                     switch state{
                         

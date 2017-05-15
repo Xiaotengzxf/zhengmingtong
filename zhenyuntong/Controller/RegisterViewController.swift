@@ -24,7 +24,6 @@ class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        registerButton.isEnabled = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -95,7 +94,14 @@ class RegisterViewController: UIViewController {
             if let object = json {
                 if let result = object["result"].int , result == 1000 {
                     Toast(text: "注册成功").show()
-                    self?.navigationController?.popViewController(animated: true)
+                    
+                    UserDefaults.standard.set(object["data"].dictionaryObject, forKey: "mine")
+                    UserDefaults.standard.set(mobile!, forKey: "mobile")
+                    UserDefaults.standard.set(object["data" , "USERID"].int, forKey: "userId")
+                    UserDefaults.standard.set(pwd!, forKey: "pwd")
+                    UserDefaults.standard.synchronize()
+                    
+                    self?.navigationController?.popToRootViewController(animated: true)
                 }else{
                     if let message = object["msg"].string , message.characters.count > 0 {
                         Toast(text: message).show()
@@ -106,6 +112,34 @@ class RegisterViewController: UIViewController {
             }
         }
     }
+    
+    /*{
+     data =     {
+     ACCOUNT = 15815815811;
+     "CATEGORY_ID" = 120;
+     CHANNEL = 1;
+     "CREATE_TIME" = "2017-05-15 18:09:34";
+     CURRENTSTATE = 4;
+     ID = "fd69ff0d-8fe9-4c60-8867-9cf01438b94a";
+     IMEI = "D19F4BE8-03F5-4EEF-840F-EE927B848A94";
+     IMSI = "D19F4BE8-03F5-4EEF-840F-EE927B848A94";
+     "IS_DELETED" = "\U5426";
+     MOBILE = 15815815811;
+     NICKNAME = jack;
+     "ORDER_ID" = 0;
+     "ORGAN_ID" = 10001;
+     PASSWORD = bd5102d39658cf2b;
+     "REF_CATEGORY_ID" = 120;
+     REGISTTIME = "2017-05-15 18:09:34";
+     REGISTTYPE = 1;
+     STATE = 1;
+     USERID = 100040;
+     USERTYPE = 1;
+     };
+     msg = "\U6ce8\U518c\U6210\U529f\Uff01";
+     result = 1000;
+     }*/
+    
     
 //    func startTimer(sender : Timer) {
 //        count -= 1
