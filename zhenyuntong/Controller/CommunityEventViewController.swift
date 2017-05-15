@@ -215,7 +215,7 @@ class CommunityEventViewController: UIViewController {
     }
     
     func addSubmitButton() {
-        if state < 2 || state == 4 {
+        if state == 0 || state == 4 {
             let button = UIButton(type: .custom)
             button.translatesAutoresizingMaskIntoConstraints = false
             button.setTitle("提交", for: .normal)
@@ -228,7 +228,7 @@ class CommunityEventViewController: UIViewController {
             
             contentView?.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-(16)-[button]-(16)-|", options: .directionLeadingToTrailing, metrics: nil, views: ["button" : button]))
             contentView?.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(top)-[button(44)]-(10)-|", options: .directionLeadingToTrailing, metrics: ["top" : height], views: ["button" : button]))
-        }else if state == 2 {
+        }else if state == 2 || state == 1{
             for i in 0..<2 {
                 let button = UIButton(type: .custom)
                 button.translatesAutoresizingMaskIntoConstraints = false
@@ -335,11 +335,11 @@ class CommunityEventViewController: UIViewController {
                     let attaches = self?.item?["PARAMS" , "attach"].array ?? self?.item?["params" , "attach"].array
                     for (key , value) in self!.images {
                         for (name , image) in value {
-                            data.append(UIImageJPEGRepresentation(image, 0.2)!, withName: attaches![Int(key)!]["name"].stringValue, fileName: "\(name).jpeg", mimeType: "image/jpeg")
+                            data.append(UIImageJPEGRepresentation(image, 0.2)!, withName: attaches![Int(key)!]["name"].stringValue, fileName: "\(name).png", mimeType: "image/png")
                         }
                     }
                     data.append(self!.title!.data(using: .utf8)!, withName: "workName")
-                    if self!.state == 2 {
+                    if self!.state == 2 || self!.state == 1 {
                         var workId = 0
                         workId = self!.item!["WORKID"].intValue
                         if workId == 0 {
@@ -364,8 +364,8 @@ class CommunityEventViewController: UIViewController {
                         data.append(nickName.data(using: .utf8)!, withName: "sendName")
                     }
                     data.append("0".data(using: .utf8)!, withName: "areaUser")
-                    data.append("\(UserDefaults.standard.integer(forKey: "userId"))".data(using: .utf8)!, withName: self!.state == 2 ? "senderId" : "userId")
-                    data.append("\(UserDefaults.standard.integer(forKey: "areaId"))".data(using: .utf8)!, withName: self!.state == 2 ? "toUser" : "areaId")
+                    data.append("\(UserDefaults.standard.integer(forKey: "userId"))".data(using: .utf8)!, withName: self!.state == 2 || self!.state == 1 ? "senderId" : "userId")
+                    data.append("\(UserDefaults.standard.integer(forKey: "areaId"))".data(using: .utf8)!, withName: self!.state == 2 || self!.state == 1 ? "toUser" : "areaId")
                     var str = self?.item?["PARAMS"].rawString() ?? ""
                     if str.characters.count == 0 || str == "null" {
                         str = self?.item?["params"].rawString() ?? ""
@@ -388,7 +388,7 @@ class CommunityEventViewController: UIViewController {
                         data.append(str.data(using: .utf8)!, withName: "params")
                     }
                     data.append("/bbServer/upload/\(Date().timeIntervalSince1970).jpg".data(using: .utf8)!, withName: "sendHeader")
-                }, to: NetworkManager.installshared.macAddress() + "/bbServer/" + (self!.state == 2 ? NetworkManager.installshared.modify : NetworkManager.installshared.submit)) { (result) in
+                }, to: NetworkManager.installshared.macAddress() + "/bbServer/" + (self!.state == 2 || self!.state == 1 ? NetworkManager.installshared.modify : NetworkManager.installshared.submit)) { (result) in
                     switch result {
                     case .success(let upload, _, _):
                         upload.responseJSON {[weak self] response in
