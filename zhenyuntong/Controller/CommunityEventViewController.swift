@@ -137,6 +137,9 @@ class CommunityEventViewController: UIViewController {
                 UserDefaults.standard.set(local, forKey: "local")
                 UserDefaults.standard.synchronize()
             }else{
+                let format = DateFormatter()
+                format.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                item?["CREATE_TIME"].string = format.string(from: Date())
                 let local = [["item" : item!.dictionaryObject! , "images" : dic , "regex" : regexes]]
                 UserDefaults.standard.set(local, forKey: "local")
                 UserDefaults.standard.synchronize()
