@@ -29,6 +29,8 @@ target 'zhenyuntong' do
     pod 'CocoaAsyncSocket'
     
     pod 'KeychainAccess'
+    
+    pod 'JPush'
 
 end
 

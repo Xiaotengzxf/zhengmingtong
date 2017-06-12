@@ -56,6 +56,8 @@ class LoginViewController: UIViewController , UITextFieldDelegate {
                     UserDefaults.standard.synchronize()
                     _ = self?.navigationController?.popViewController(animated: true)
                     
+                    JPUSHService.setAlias(mobile!, callbackSelector: nil, object: nil)
+                    
                     /*ACCOUNT = 15220277437;
                      ADDRESS = "\U6e56\U5317\U5b89\U5c45";
                      "CATEGORY_ID" = 120;

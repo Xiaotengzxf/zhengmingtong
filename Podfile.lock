@@ -9,6 +9,9 @@ PODS:
     - FMDB/standard (= 2.6.2)
   - FMDB/standard (2.6.2)
   - IQKeyboardManagerSwift (4.0.7)
+  - JCore (1.1.1)
+  - JPush (3.0.2):
+    - JCore (~> 1.1.1)
   - KeychainAccess (3.0.1)
   - MBProgressHUD (1.0.0)
   - MJRefresh (3.1.12)
@@ -38,6 +41,7 @@ DEPENDENCIES:
   - DZNEmptyDataSet
   - FMDB
   - IQKeyboardManagerSwift
+  - JPush
   - KeychainAccess
   - MBProgressHUD
   - MJRefresh
@@ -71,6 +75,8 @@ SPEC CHECKSUMS:
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   IQKeyboardManagerSwift: 58bbcf46b5cf9fd4ed625d28a60cb2fbae4ab0f4
+  JCore: 2210a789c8efb7dc2a46b1c24d2209b995b18ad2
+  JPush: 01a693fafe51b93eafc2e368bbc7a7cc07e12ce4
   KeychainAccess: 017ea25e313a49eda10bb19b0bb0760fb1edfe1a
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   MJRefresh: b96cdb21c4aa75a7b07654311ab2f315c497e806
@@ -83,6 +89,6 @@ SPEC CHECKSUMS:
   SwiftyJSON: 38a8ea2006779c0fc4c310cb2ee8195327740faf
   Toaster: be65cd48e93a525b2a9cc4bd25a2bfc900e02d9f
 
-PODFILE CHECKSUM: 22448201cbe9e242e7918ca3a06cab56855a77e6
+PODFILE CHECKSUM: 9a4b527bd792e5b15dd0b56f98d4b3008139785f
 
-COCOAPODS: 1.2.0.beta.1
+COCOAPODS: 1.2.1.beta.1
