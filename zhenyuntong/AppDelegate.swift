@@ -85,8 +85,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate , GCDAsyncSocketDelegate ,
             self.perform(#selector(receivePush), with: remote, afterDelay: 1.0);
         }
         
-        if let mobile = UserDefaults.standard.object(forKey: "mobile") as? String {
-            JPUSHService.setAlias(mobile, callbackSelector: nil, object: nil)
+        if let mine = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
+            JPUSHService.setAlias(mine["USERID"] as? String ?? "", callbackSelector: nil, object: nil)
         }
         
         return true
