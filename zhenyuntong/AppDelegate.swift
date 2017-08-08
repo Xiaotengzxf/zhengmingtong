@@ -85,9 +85,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate , GCDAsyncSocketDelegate ,
             self.perform(#selector(receivePush), with: remote, afterDelay: 1.0);
         }
         
-        if let mine = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
-            JPUSHService.setAlias(mine["USERID"] as? String ?? "", callbackSelector: nil, object: nil)
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.handleNotification(sender:)), name: NSNotification.Name(rawValue: NSNotification.Name.jpfNetworkDidLogin.rawValue), object: nil)
+        
+        application.applicationIconBadgeNumber = 0
         
         return true
     }
@@ -98,7 +98,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate , GCDAsyncSocketDelegate ,
     @available(iOS 10.0, *)
     func jpushNotificationCenter(_ center: UNUserNotificationCenter!, willPresent notification: UNNotification!, withCompletionHandler completionHandler: ((Int) -> Void)!) {
         
-        let userInfo = notification.request.content.userInfo;
+        let userInfo = notification.request.content.userInfo
+        print("消息：\(userInfo)")
         if notification.request.trigger is UNPushNotificationTrigger {
             JPUSHService.handleRemoteNotification(userInfo);
         }
@@ -108,7 +109,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate , GCDAsyncSocketDelegate ,
     @available(iOS 10.0, *)
     func jpushNotificationCenter(_ center: UNUserNotificationCenter!, didReceive response: UNNotificationResponse!, withCompletionHandler completionHandler: (() -> Void)!) {
         
-        let userInfo = response.notification.request.content.userInfo;
+        let userInfo = response.notification.request.content.userInfo
+        print("消息：\(userInfo)")
         if response.notification.request.trigger is UNPushNotificationTrigger {
             JPUSHService.handleRemoteNotification(userInfo);
         }
@@ -117,7 +119,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate , GCDAsyncSocketDelegate ,
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
+        print("消息：\(userInfo)")
         JPUSHService.handleRemoteNotification(userInfo);
         completionHandler(UIBackgroundFetchResult.newData);
     }
@@ -153,6 +155,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate , GCDAsyncSocketDelegate ,
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        application.applicationIconBadgeNumber = 0
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -265,6 +268,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate , GCDAsyncSocketDelegate ,
         message.senderId = "\(UserDefaults.standard.integer(forKey: "userId"))"
         if let data = message.data() {
             clientSocket?.write(data, withTimeout: -1, tag: 0)
+        }
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+    }
+    
+    func handleNotification(sender : Any) {
+        if let mine = UserDefaults.standard.object(forKey: "mine") as? [String : Any] {
+            let userid = "\(mine["USERID"] as? Int ?? 0)"
+            JPUSHService.setAlias(userid, callbackSelector: nil, object: nil)
         }
     }
 

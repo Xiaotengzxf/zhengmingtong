@@ -98,6 +98,12 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
                             self?.chatJson += array
                         }
                         self?.tableView.reloadData()
+                        var count = 0
+                        for item in self!.chatJson {
+                            count += item["unReadCount"].intValue
+                        }
+                        NotificationCenter.default.post(name: Notification.Name("TabBarController"), object: count)
+                        
                     }else if result == 1004 {
                         if self!.page == 0 {
                             self?.nShowEmpty = 1
@@ -139,6 +145,15 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
         if let label = cell.contentView.viewWithTag(4) as? UILabel {
             label.text = "咨询类型：\(chatJson[indexPath.row]["typeName"].string ?? "") 咨询时间：\(chatJson[indexPath.row]["createTime"].string ?? "")"
         }
+        if let label = cell.contentView.viewWithTag(20) as? UILabel {
+            label.isHidden = true
+            label.layer.cornerRadius = 10
+            label.clipsToBounds = true
+            if let unReadCount = chatJson[indexPath.row]["unReadCount"].int, unReadCount > 0 {
+                label.isHidden = false
+                label.text = "\(unReadCount)"
+            }
+        }
 
         return cell
     }
@@ -147,6 +162,17 @@ class ChatTableViewController: UITableViewController, DZNEmptyDataSetSource , DZ
         tableView.deselectRow(at: indexPath, animated: true)
         selectedRow = indexPath.row
         self.performSegue(withIdentifier: "news", sender: self)
+        
+        var count = 0
+        for item in chatJson {
+            count += item["unReadCount"].intValue
+        }
+        if count > 0 {
+            count = count - chatJson[indexPath.row]["unReadCount"].intValue
+        }
+        if count >= 0 {
+            NotificationCenter.default.post(name: Notification.Name("TabBarController"), object: count)
+        }
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
